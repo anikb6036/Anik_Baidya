@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anik Baidya | QA Engineer Portfolio</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --purple: #7c3aed;
+    --purple-light: #a78bfa;
+    --purple-dark: #4c1d95;
+    --bg: #0f0f1a;
+    --bg2: #16162a;
+    --bg3: #1e1e35;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: rgba(124,58,237,0.25);
+    --glow: 0 0 20px rgba(124,58,237,0.3);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+  /* PARTICLES */
+  #particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+  /* LOGIN OVERLAY */
+  #login-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a0a2e 50%, #0f0f1a 100%);
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.6s, visibility 0.6s;
+  }
+  #login-overlay.hidden { opacity: 0; visibility: hidden; }
+  .login-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 48px 40px;
+    width: 380px;
+    box-shadow: var(--glow), 0 0 80px rgba(124,58,237,0.1);
+    animation: loginFadeIn 0.8s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .login-box::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: conic-gradient(from 0deg, transparent 0deg, rgba(124,58,237,0.05) 60deg, transparent 120deg);
+    animation: rotate 8s linear infinite;
+  }
+  @keyframes rotate { to { transform: rotate(360deg); } }
+  @keyframes loginFadeIn { from { opacity: 0; transform: translateY(30px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .login-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--purple-light));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px; font-weight: 700; color: white;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 30px rgba(124,58,237,0.5);
+    position: relative; z-index: 1;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 30px rgba(124,58,237,0.5); } 50% { box-shadow: 0 0 50px rgba(124,58,237,0.8); } }
+  .login-title { text-align: center; font-size: 22px; font-weight: 700; margin-bottom: 6px; position: relative; z-index: 1; }
+  .login-sub { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 32px; position: relative; z-index: 1; }
+  .login-box label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; position: relative; z-index: 1; }
+  .login-box input {
+    width: 100%; padding: 12px 16px; background: var(--bg3);
+    border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); font-size: 14px; margin-bottom: 20px;
+    outline: none; transition: border-color 0.3s, box-shadow 0.3s;
+    position: relative; z-index: 1;
+  }
+  .login-box input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,58,237,0.15); }
+  .login-btn {
+    width: 100%; padding: 13px; background: linear-gradient(135deg, var(--purple), #9333ea);
+    border: none; border-radius: 10px; color: white;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; z-index: 1; letter-spacing: 0.5px;
+  }
+  .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(124,58,237,0.5); }
+  .login-hint { text-align: center; font-size: 12px; color: var(--muted); margin-top: 16px; position: relative; z-index: 1; }
+  .login-hint span { color: var(--purple-light); }
+  .login-error { color: #f87171; font-size: 12px; text-align: center; margin-top: -12px; margin-bottom: 12px; display: none; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(15,15,26,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%;
+    height: 64px;
+    transform: translateY(-100%);
+    transition: transform 0.6s ease;
+  }
+  nav.visible { transform: translateY(0); }
+  .nav-logo { font-size: 20px; font-weight: 700; }
+  .nav-logo span { color: var(--purple-light); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--purple-light); }
+  .nav-logout {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); padding: 7px 16px; border-radius: 8px;
+    cursor: pointer; font-size: 13px; transition: all 0.2s;
+  }
+  .nav-logout:hover { border-color: var(--purple); color: var(--purple-light); }
+
+  /* MAIN CONTENT */
+  main { position: relative; z-index: 1; }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 0 20px; padding-top: 64px;
+    position: relative;
+  }
+  .hero-content { max-width: 700px; }
+  .hero-badge {
+    display: inline-block; background: rgba(124,58,237,0.15);
+    border: 1px solid var(--border); border-radius: 30px;
+    padding: 6px 18px; font-size: 13px; color: var(--purple-light);
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease 0.2s both;
+  }
+  .hero-name {
+    font-size: clamp(40px, 7vw, 72px); font-weight: 800;
+    line-height: 1.1; margin-bottom: 16px;
+    animation: fadeUp 0.6s ease 0.4s both;
+  }
+  .hero-name .highlight {
+    background: linear-gradient(135deg, var(--purple-light), #c084fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-role {
+    font-size: 20px; color: var(--muted); margin-bottom: 32px;
+    animation: fadeUp 0.6s ease 0.6s both;
+  }
+  .hero-tags {
+    display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+    margin-bottom: 40px; animation: fadeUp 0.6s ease 0.8s both;
+  }
+  .tag {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 14px; font-size: 13px; color: var(--muted);
+    transition: all 0.2s;
+  }
+  .tag:hover { border-color: var(--purple-light); color: var(--purple-light); transform: translateY(-2px); }
+  .hero-btns { display: flex; gap: 14px; justify-content: center; animation: fadeUp 0.6s ease 1s both; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--purple), #9333ea);
+    border: none; border-radius: 10px; color: white;
+    padding: 13px 28px; font-size: 15px; font-weight: 600;
+    cursor: pointer; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(124,58,237,0.5); }
+  .btn-secondary {
+    background: transparent; border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    padding: 13px 28px; font-size: 15px; font-weight: 600;
+    cursor: pointer; text-decoration: none; transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--purple); color: var(--purple-light); transform: translateY(-2px); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SCROLL INDICATOR */
+  .scroll-down {
+    position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+    color: var(--muted); font-size: 13px; display: flex; flex-direction: column;
+    align-items: center; gap: 8px; animation: bounce 2s infinite;
+  }
+  @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+  /* SECTIONS */
+  section { padding: 100px 5%; max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 3px;
+    color: var(--purple-light); margin-bottom: 12px;
+  }
+  .section-title { font-size: clamp(28px, 4vw, 42px); font-weight: 700; margin-bottom: 48px; }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .stat-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px 24px; text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .stat-card:hover { transform: translateY(-6px); box-shadow: var(--glow); }
+  .stat-num { font-size: 36px; font-weight: 800; color: var(--purple-light); }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+  /* SKILLS */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .skill-group {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .skill-group:hover { transform: translateY(-4px); box-shadow: var(--glow); }
+  .skill-group-title {
+    font-size: 13px; color: var(--purple-light); text-transform: uppercase;
+    letter-spacing: 1.5px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .skill-item { margin-bottom: 14px; }
+  .skill-name { font-size: 13px; color: var(--text); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .skill-bar { height: 5px; background: var(--bg3); border-radius: 99px; overflow: hidden; }
+  .skill-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--purple), var(--purple-light)); width: 0; transition: width 1.2s ease; }
+
+  /* PROJECTS */
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+  .project-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .project-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--purple-light));
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .project-card:hover::before { transform: scaleX(1); }
+  .project-card:hover { transform: translateY(-6px); box-shadow: var(--glow); }
+  .project-date { font-size: 12px; color: var(--purple-light); margin-bottom: 10px; }
+  .project-title { font-size: 17px; font-weight: 600; margin-bottom: 12px; }
+  .project-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .project-tag {
+    background: rgba(124,58,237,0.12); color: var(--purple-light);
+    border-radius: 20px; padding: 4px 12px; font-size: 12px;
+  }
+  .project-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-size: 13px; color: var(--purple-light); text-decoration: none; }
+  .project-link:hover { text-decoration: underline; }
+
+  /* EXPERIENCE */
+  .exp-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px;
+    display: flex; gap: 24px; align-items: flex-start;
+  }
+  .exp-icon {
+    width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--purple-dark), var(--purple));
+    display: flex; align-items: center; justify-content: center; font-size: 24px;
+    box-shadow: 0 0 20px rgba(124,58,237,0.3);
+  }
+  .exp-company { font-size: 18px; font-weight: 700; }
+  .exp-role { font-size: 14px; color: var(--purple-light); margin: 4px 0; }
+  .exp-date { font-size: 13px; color: var(--muted); }
+
+  /* CONTACT */
+  .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .contact-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 20px 24px;
+    display: flex; align-items: center; gap: 16px;
+    text-decoration: none; color: var(--text);
+    transition: all 0.3s;
+  }
+  .contact-card:hover { border-color: var(--purple); transform: translateY(-3px); box-shadow: var(--glow); }
+  .contact-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: rgba(124,58,237,0.15); display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: var(--purple-light);
+  }
+  .contact-label { font-size: 12px; color: var(--muted); }
+  .contact-value { font-size: 14px; font-weight: 500; margin-top: 2px; }
+
+  /* FOOTER */
+  footer {
+    text-align: center; padding: 40px; color: var(--muted); font-size: 13px;
+    border-top: 1px solid var(--border); position: relative; z-index: 1;
+  }
+  footer span { color: var(--purple-light); }
+
+  /* REVEAL ANIM */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* TYPING */
+  .typed::after { content: '|'; animation: blink 0.8s infinite; color: var(--purple-light); }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); max-width: 1100px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- LOGIN OVERLAY -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-avatar">AB</div>
+    <div class="login-title">Welcome Back 👋</div>
+    <div class="login-sub">Login to view Anik's Portfolio</div>
+    <label>Username</label>
+    <input type="text" id="username" placeholder="Enter username" autocomplete="off">
+    <label>Password</label>
+    <input type="password" id="password" placeholder="Enter password">
+    <div class="login-error" id="login-error">❌ Invalid credentials. Try again.</div>
+    <button class="login-btn" onclick="doLogin()">
+      <i class="fas fa-sign-in-alt"></i> Login
+    </button>
+    <div class="login-hint">Hint: Username <span>anik</span> · Password <span>qa2025</span></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">Anik<span>.</span>dev</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <button class="nav-logout" onclick="logout()">
+    <i class="fas fa-sign-out-alt"></i> Logout
+  </button>
+</nav>
+
+<main>
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">⚡ Available for Opportunities</div>
+      <h1 class="hero-name">
+        Hi, I'm <span class="highlight">Anik Baidya</span>
+      </h1>
+      <p class="hero-role"><span id="typed-text" class="typed"></span></p>
+      <div class="hero-tags">
+        <span class="tag">🔍 Selenium</span>
+        <span class="tag">🌲 Cypress</span>
+        <span class="tag">📬 Postman</span>
+        <span class="tag">☕ Java</span>
+        <span class="tag">🟨 JavaScript</span>
+        <span class="tag">🐍 Python</span>
+        <span class="tag">⚙️ Jenkins</span>
+        <span class="tag">🔧 Git</span>
+      </div>
+      <div class="hero-btns">
+        <a href="#projects" class="btn-primary">View Projects</a>
+        <a href="#contact" class="btn-secondary">Contact Me</a>
+      </div>
+    </div>
+    <div class="scroll-down">
+      <i class="fas fa-chevron-down"></i>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT / STATS -->
+  <section id="about" style="padding-top: 80px;">
+    <div class="section-label reveal">About Me</div>
+    <div class="section-title reveal">Numbers that speak 🎯</div>
+    <div class="stats-grid">
+      <div class="stat-card reveal">
+        <div class="stat-num" data-count="50">0</div>
+        <div class="stat-label">Test Cases Developed</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-num" data-count="30">0</div>
+        <div class="stat-label">% Manual Effort Reduced</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-num" data-count="3">0</div>
+        <div class="stat-label">Major Projects</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-num" data-count="1">0</div>
+        <div class="stat-label">Year of Experience</div>
+      </div>
+    </div>
+    <p style="margin-top:40px; color: var(--muted); line-height:1.9; max-width:680px;" class="reveal">
+      Dedicated <strong style="color:var(--purple-light)">SDET/QA professional</strong> skilled in Selenium, Cypress, and Postman with expertise in testing methodologies, test scenario design, and bug reporting. Proficient in algorithms and collaborative problem-solving, ensuring high-quality deliverables. Adaptable to emerging technologies like Generative AI, with strong attention to detail and a passion for continuous learning.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-label reveal">Technical Arsenal</div>
+    <div class="section-title reveal">What I work with 🛠️</div>
+    <div class="skills-grid">
+      <div class="skill-group reveal">
+        <div class="skill-group-title"><i class="fas fa-code"></i> Languages</div>
+        <div class="skill-item"><div class="skill-name"><span>Java</span><span>80%</span></div><div class="skill-bar"><div class="skill-fill" data-width="80"></div></div></div>
+        <div class="skill-item"><div class="skill-name"><span>JavaScript</span><span>75%</span></div><div class="skill-bar"><div class="skill-fill" data-width="75"></div></div></div>
+        <div class="skill-item"><div class="skill-name"><span>Python</span><span>70%</span></div><div class="skill-bar"><div class="skill-fill" data-width="70"></div></div></div>
+      </div>
+      <div class="skill-group reveal">
+        <div class="skill-group-title"><i class="fas fa-robot"></i> Test Automation</div>
+        <div class="skill-item"><div class="skill-name"><span>Cypress (POM/Cucumber)</span><span>90%</span></div><div class="skill-bar"><div class="skill-fill" data-width="90"></div></div></div>
+        <div class="skill-item"><div class="skill-name"><span>Selenium (POM/TestNG)</span><span>85%</span></div><div class="skill-bar"><div class="skill-fill" data-width="85"></div></div></div>
+        <div class="skill-item"><div class="skill-name"><span>API Testing (Postman)</span><span>85%</span></div><div class="skill-bar"><div class="skill-fill" data-width="85"></div></div></div>
+      </div>
+      <div class="skill-group reveal">
+        <div class="skill-group-title"><i class="fas fa-tools"></i> DevOps & Tools</div>
+        <div class="skill-item"><div class="skill-name"><span>Git / Bitbucket</span><span>80%</span></div><div class="skill-bar"><div class="skill-fill" data-width="80"></div></div></div>
+        <div class="skill-item"><div class="skill-name"><span>Jenkins (CI/CD)</span><span>70%</span></div><div class="skill-bar"><div class="skill-fill" data-width="70"></div></div></div>
+        <div class="skill-item"><div class="skill-name"><span>Page Object Model</span><span>90%</span></div><div class="skill-bar"><div class="skill-fill" data-width="90"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-label reveal">Work Showcase</div>
+    <div class="section-title reveal">Featured Projects 🚀</div>
+    <div class="projects-grid">
+      <div class="project-card reveal">
+        <div class="project-date">Jan 2025 · Hackathon</div>
+        <div class="project-title">E-Commerce Testing — Tutorials Ninja</div>
+        <div class="project-desc">Developed and executed 50+ test cases covering critical e-commerce workflows. Automated end-to-end scenarios, reducing manual testing effort by ~30%.</div>
+        <div class="project-tags">
+          <span class="project-tag">Selenium</span>
+          <span class="project-tag">POM Pattern</span>
+          <span class="project-tag">E2E Testing</span>
+        </div>
+        <a href="https://github.com/anikb6036" class="project-link" target="_blank"><i class="fab fa-github"></i> View on GitHub</a>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-date">May 2024 · Manual Testing</div>
+        <div class="project-title">Manual Testing — E-Commerce Platform</div>
+        <div class="project-desc">Designed comprehensive test scenarios using Cypress and POM methodology. Documented detailed issue reports with reproduction steps for prompt bug resolution.</div>
+        <div class="project-tags">
+          <span class="project-tag">Cypress</span>
+          <span class="project-tag">Bug Reports</span>
+          <span class="project-tag">POM</span>
+        </div>
+        <a href="https://github.com/anikb6036" class="project-link" target="_blank"><i class="fab fa-github"></i> View on GitHub</a>
+      </div>
+      <div class="project-card reveal">
+        <div class="project-date">Sep 2024 · Automation</div>
+        <div class="project-title">Cypress Automation — OrangeHRM</div>
+        <div class="project-desc">Designed comprehensive test scenarios for OrangeHRM using Cypress and POM methodology. Improved software reliability by collaborating with developers on bug fixes.</div>
+        <div class="project-tags">
+          <span class="project-tag">Cypress</span>
+          <span class="project-tag">OrangeHRM</span>
+          <span class="project-tag">Automation</span>
+        </div>
+        <a href="https://github.com/anikb6036" class="project-link" target="_blank"><i class="fab fa-github"></i> View on GitHub</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-label reveal">Career</div>
+    <div class="section-title reveal">Work Experience 💼</div>
+    <div class="exp-card reveal">
+      <div class="exp-icon">🧪</div>
+      <div>
+        <div class="exp-company">Underscore Technology PVT — Kolkata</div>
+        <div class="exp-role">QA Engineer</div>
+        <div class="exp-date">Mar 2025 – Apr 2026 · 1 Year</div>
+        <p style="margin-top:14px; color: var(--muted); font-size:14px; line-height:1.8;">
+          Working as a QA Engineer responsible for designing and executing test plans, automating test suites with Cypress and Selenium, performing API testing via Postman, and ensuring high-quality software delivery through CI/CD pipelines using Jenkins and Bitbucket.
+        </p>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+      <div class="section-label reveal" style="margin-bottom:16px;">Education & Certifications 🎓</div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px;">
+        <div class="stat-card reveal" style="text-align:left; padding:24px;">
+          <div style="color:var(--purple-light); font-size:20px; margin-bottom:8px;">🏫</div>
+          <div style="font-weight:600; margin-bottom:4px;">SDET Certification</div>
+          <div style="font-size:13px; color:var(--muted);">Masai School · Jun 2024 – Jun 2025</div>
+        </div>
+        <div class="stat-card reveal" style="text-align:left; padding:24px;">
+          <div style="color:var(--purple-light); font-size:20px; margin-bottom:8px;">🏆</div>
+          <div style="font-weight:600; margin-bottom:4px;">xto10x Hackathon by Masai</div>
+          <div style="font-size:13px; color:var(--muted);">Masai School · Certified</div>
+        </div>
+        <div class="stat-card reveal" style="text-align:left; padding:24px;">
+          <div style="color:var(--purple-light); font-size:20px; margin-bottom:8px;">🎤</div>
+          <div style="font-weight:600; margin-bottom:4px;">Masai Speaking Marathon</div>
+          <div style="font-size:13px; color:var(--muted);">Masai School · Certified</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-label reveal">Get In Touch</div>
+    <div class="section-title reveal">Let's Connect 🤝</div>
+    <div class="contact-grid">
+      <a href="mailto:anik.baidya@hotmail.com" class="contact-card reveal">
+        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value">anik.baidya@hotmail.com</div>
+        </div>
+      </a>
+      <a href="tel:+918927936036" class="contact-card reveal">
+        <div class="contact-icon"><i class="fas fa-phone"></i></div>
+        <div>
+          <div class="contact-label">Phone</div>
+          <div class="contact-value">+91 89279 36036</div>
+        </div>
+      </a>
+      <a href="https://github.com/anikb6036" target="_blank" class="contact-card reveal">
+        <div class="contact-icon"><i class="fab fa-github"></i></div>
+        <div>
+          <div class="contact-label">GitHub</div>
+          <div class="contact-value">github.com/anikb6036</div>
+        </div>
+      </a>
+      <div class="contact-card reveal">
+        <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+        <div>
+          <div class="contact-label">Location</div>
+          <div class="contact-value">Thakurnagar, Kolkata</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>Crafted with ❤️ by <span>Anik Baidya</span> · QA Engineer · Kolkata, India</p>
+  <p style="margin-top:8px; font-size:12px; opacity:0.6;">© 2025 All Rights Reserved</p>
+</footer>
+
+<script>
+// PARTICLES
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); window.addEventListener('resize', resize);
+for (let i = 0; i < 80; i++) {
+  particles.push({
+    x: Math.random() * innerWidth, y: Math.random() * innerHeight,
+    r: Math.random() * 1.5 + 0.3,
+    vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+    opacity: Math.random() * 0.5 + 0.1
+  });
+}
+function drawParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(167,139,250,${p.opacity})`;
+    ctx.fill();
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+  });
+  // Draw connecting lines
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 120) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(124,58,237,${0.15 * (1 - dist/120)})`;
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// LOGIN
+function doLogin() {
+  const u = document.getElementById('username').value.trim().toLowerCase();
+  const p = document.getElementById('password').value;
+  const err = document.getElementById('login-error');
+  if (u === 'anik' && p === 'qa2025') {
+    document.getElementById('login-overlay').classList.add('hidden');
+    document.getElementById('navbar').classList.add('visible');
+    startTyping();
+    initReveal();
+    animateStats();
+    animateSkillBars();
+  } else {
+    err.style.display = 'block';
+    document.getElementById('password').value = '';
+    document.getElementById('password').focus();
+    setTimeout(() => err.style.display = 'none', 3000);
+  }
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('login-overlay').classList.contains('hidden')) doLogin();
+});
+
+function logout() {
+  document.getElementById('login-overlay').classList.remove('hidden');
+  document.getElementById('navbar').classList.remove('visible');
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
+}
+
+// TYPING EFFECT
+const roles = ['SDET / QA Engineer', 'Test Automation Expert', 'Cypress & Selenium Pro', 'Bug Hunter 🐛'];
+let roleIdx = 0, charIdx = 0, deleting = false;
+function startTyping() {
+  const el = document.getElementById('typed-text');
+  function type() {
+    const current = roles[roleIdx];
+    if (!deleting) {
+      el.textContent = current.slice(0, charIdx + 1);
+      charIdx++;
+      if (charIdx === current.length) { deleting = true; setTimeout(type, 1800); return; }
+    } else {
+      el.textContent = current.slice(0, charIdx - 1);
+      charIdx--;
+      if (charIdx === 0) { deleting = false; roleIdx = (roleIdx + 1) % roles.length; }
+    }
+    setTimeout(type, deleting ? 60 : 90);
+  }
+  type();
+}
+
+// REVEAL ON SCROLL
+function initReveal() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+// ANIMATE STATS
+function animateStats() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const el = e.target.querySelector('[data-count]');
+        if (el && !el.dataset.done) {
+          el.dataset.done = '1';
+          const target = parseInt(el.dataset.count);
+          let count = 0;
+          const step = Math.ceil(target / 40);
+          const interval = setInterval(() => {
+            count = Math.min(count + step, target);
+            el.textContent = count + (el.dataset.count == '30' ? '%' : '+');
+            if (count >= target) clearInterval(interval);
+          }, 30);
+        }
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.stat-card').forEach(c => observer.observe(c));
+}
+
+// SKILL BARS
+function animateSkillBars() {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.skill-fill').forEach(bar => {
+          bar.style.width = bar.dataset.width + '%';
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.skill-group').forEach(g => observer.observe(g));
+}
+</script>
+</body>
+</html>
